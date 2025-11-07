@@ -1,5 +1,10 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
+import {
+  normalizeDate,
+  monthLabel,
+  getWeekdayLabels,
+} from '../utils/date.js'
 
 const props = defineProps({
   modelValue: { type: [String, Date], default: '' },
@@ -17,26 +22,38 @@ const emit = defineEmits([
   'month-change',      
 ])
 
-//заглушки для шапки:
-const displayLabel = computed(() => 'Month YYYY') 
+const initial =
+  normalizeDate(props.modelValue) ??
+  normalizeDate(props.initialMonth) ??
+  new Date()
+
+const viewAnchor = ref(initial)
+
+const headerLabel = computed(() => monthLabel(viewAnchor.value, props.locale))
+
+const weekdayLabels = computed(() =>
+  getWeekdayLabels(props.locale, props.startWeekOn, props.weekdayFormat)
+)
+
 </script>
 
 <template>
   <div class="cal" role="application" aria-label="Calendar">
     <div class="cal__header">
       <button class="cal__nav" aria-label="Previous month" type="button">&lt;</button>
-      <div class="cal__label">{{ displayLabel }}</div>
+      <div class="cal__label">{{ headerLabel }}</div>
       <button class="cal__nav" aria-label="Next month" type="button">&gt;</button>
     </div>
 
     <div class="cal__weekdays" role="row">
-      <span class="cal__weekday">Пн</span>
-      <span class="cal__weekday">Вт</span>
-      <span class="cal__weekday">Ср</span>
-      <span class="cal__weekday">Чт</span>
-      <span class="cal__weekday">Пт</span>
-      <span class="cal__weekday">Сб</span>
-      <span class="cal__weekday">Вс</span>
+      <span
+        v-for="(w, i) in weekdayLabels"
+        :key="i"
+        class="cal__weekday"
+        aria-hidden="true"
+      >
+        {{ w }}
+      </span>
     </div>
 
     <div class="cal__grid" role="grid" aria-readonly="true">
