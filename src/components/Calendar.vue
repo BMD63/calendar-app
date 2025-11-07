@@ -39,7 +39,7 @@ const weekdayLabels = computed(() =>
   getWeekdayLabels(props.locale, props.startWeekOn, props.weekdayFormat)
 )
 
-// сетки 6×7 
+// сетка 6×7 
 const today = new Date()
 const monthStart = computed(() => startOfMonth(viewAnchor.value))
 const gridStart = computed(() => getGridStart(viewAnchor.value, props.startWeekOn))
@@ -57,14 +57,31 @@ const cells = computed(() => {
   })
 })
 
+function changeMonth(delta) {
+    const y = viewAnchor.value.getFullYear()
+    const m = viewAnchor.value.getMonth()
+    const next = new Date(y, m + delta, 1) // всегда на 1-е число, чтобы даты не перетекали
+    viewAnchor.value = next
+    emit('month-change', { year: next.getFullYear(), month: next.getMonth() + 1 }) 
+}
 </script>
 
 <template>
   <div class="cal" role="application" aria-label="Calendar">
     <div class="cal__header">
-      <button class="cal__nav" aria-label="Previous month" type="button">&lt;</button>
+      <button 
+        class="cal__nav" 
+        aria-label="Previous month" 
+        type="button"
+        @click="changeMonth(-1)"
+        >&lt;</button>
       <div class="cal__label">{{ headerLabel }}</div>
-      <button class="cal__nav" aria-label="Next month" type="button">&gt;</button>
+      <button 
+        class="cal__nav" 
+        aria-label="Next month" 
+        type="button"
+        @click="changeMonth(+1)"
+      >&gt;</button>
     </div>
 
     <div class="cal__weekdays" role="row">
