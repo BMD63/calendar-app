@@ -15,7 +15,7 @@ const selected = ref('')
         <label>Выбранная дата:</label>
         <code>{{ selected || '—' }}</code>
       </div>
-      <Calendar />
+      <Calendar v-model="selected" locale="ru-RU"/>
     </section>
   </main>
 </template>

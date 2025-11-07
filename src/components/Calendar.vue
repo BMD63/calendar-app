@@ -8,6 +8,7 @@ import {
   startOfMonth,
   addDays,
   sameDay,
+  formatYmd,
 } from '../utils/date.js'
 
 const props = defineProps({
@@ -33,6 +34,8 @@ const initial =
 
 const viewAnchor = ref(initial)
 
+const selected = computed(() => normalizeDate(props.modelValue))
+
 const headerLabel = computed(() => monthLabel(viewAnchor.value, props.locale))
 
 const weekdayLabels = computed(() =>
@@ -56,6 +59,12 @@ const cells = computed(() => {
     }
   })
 })
+
+function selectDate(date) {
+  const ymd = formatYmd(date)
+  emit('update:modelValue', ymd)
+  emit('select', date)
+}
 
 function changeMonth(delta) {
     const y = viewAnchor.value.getFullYear()
@@ -104,10 +113,10 @@ function changeMonth(delta) {
         :class="{
           '--outside': !cell.inCurrentMonth,
           '--today': cell.isToday,
+          '--selected': selected && sameDay(cell.date, selected),
         }"
         :aria-label="cell.date.toDateString()"
-        :tabindex="-1"
-        disabled
+        @click="selectDate(cell.date)"
       >
         <span class="cal__day-num">{{ cell.date.getDate() }}</span>
       </button>
@@ -175,7 +184,8 @@ function changeMonth(delta) {
   border: 1px solid var(--c-border);
   border-radius: 8px;
   background:#fff;
-  text-align: center;
+  display: grid;
+  place-items: center;
   padding: 6px 8px;
   color: var(--c-text);
 }
@@ -196,6 +206,13 @@ function changeMonth(delta) {
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
+
+.cal__day.--selected {
+  background: var(--c-accent);
+  color: #fff;
+  border-color: var(--c-accent);
+}
+
 .cal__placeholder{
   height: 200px;
   display:grid;
