@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import {
   normalizeDate,
   monthLabel,
@@ -33,6 +33,15 @@ const initial =
   new Date()
 
 const viewAnchor = ref(initial)
+watch(
+  () => props.modelValue,
+  (nv) => {
+    const d = normalizeDate(nv)
+    if (d) {
+      viewAnchor.value = new Date(d.getFullYear(), d.getMonth(), 1)
+    }
+  }
+)
 
 const selected = computed(() => normalizeDate(props.modelValue))
 
@@ -61,9 +70,14 @@ const cells = computed(() => {
 })
 
 function selectDate(date) {
-  const ymd = formatYmd(date)
-  emit('update:modelValue', ymd)
-  emit('select', date)
+    const curMonth = monthStart.value.getMonth()
+    if (date.getMonth() !== curMonth) {
+        viewAnchor.value = new Date(date.getFullYear(), date.getMonth(), 1)
+        emit('month-change', { year: date.getFullYear(), month: date.getMonth() + 1 })
+    }
+    const ymd = formatYmd(date)
+    emit('update:modelValue', ymd)
+    emit('select', date)
 }
 
 function changeMonth(delta) {
@@ -186,7 +200,6 @@ function changeMonth(delta) {
   background:#fff;
   display: grid;
   place-items: center;
-  padding: 6px 8px;
   color: var(--c-text);
 }
 .cal__day:disabled{
