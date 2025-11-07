@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import Calendar from './components/Calendar.vue'
 
 const selected = ref('') 
 </script>
@@ -14,7 +15,7 @@ const selected = ref('')
         <label>Выбранная дата:</label>
         <code>{{ selected || '—' }}</code>
       </div>
-      <!-- календарь -->
+      <Calendar />
     </section>
   </main>
 </template>
