@@ -4,6 +4,10 @@ import {
   normalizeDate,
   monthLabel,
   getWeekdayLabels,
+  getGridStart,
+  startOfMonth,
+  addDays,
+  sameDay,
 } from '../utils/date.js'
 
 const props = defineProps({
@@ -35,6 +39,24 @@ const weekdayLabels = computed(() =>
   getWeekdayLabels(props.locale, props.startWeekOn, props.weekdayFormat)
 )
 
+// сетки 6×7 
+const today = new Date()
+const monthStart = computed(() => startOfMonth(viewAnchor.value))
+const gridStart = computed(() => getGridStart(viewAnchor.value, props.startWeekOn))
+
+const cells = computed(() => {
+  const start = gridStart.value
+  const curMonth = monthStart.value.getMonth()
+  return Array.from({ length: 42 }, (_, i) => {
+    const date = addDays(start, i)
+    return {
+      date,
+      isToday: sameDay(date, today),
+      inCurrentMonth: date.getMonth() === curMonth,
+    }
+  })
+})
+
 </script>
 
 <template>
@@ -57,7 +79,21 @@ const weekdayLabels = computed(() =>
     </div>
 
     <div class="cal__grid" role="grid" aria-readonly="true">
-      <div class="cal__placeholder">[ сетка ]</div>
+      <button
+        v-for="(cell, i) in cells"
+        :key="i"
+        class="cal__day"
+        type="button"
+        :class="{
+          '--outside': !cell.inCurrentMonth,
+          '--today': cell.isToday,
+        }"
+        :aria-label="cell.date.toDateString()"
+        :tabindex="-1"
+        disabled
+      >
+        <span class="cal__day-num">{{ cell.date.getDate() }}</span>
+      </button>
     </div>
   </div>
 </template>
@@ -107,13 +143,42 @@ const weekdayLabels = computed(() =>
   text-align:center;
 }
 
-.cal__weekday{ padding:4px 0; }
+.cal__weekday{ padding:4px 0; text-transform: uppercase;}
 
 .cal__grid{
-  min-height: 220px;
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
   padding:8px;
 }
 
+.cal__day{
+  position: relative;
+  height: 40px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  background:#fff;
+  text-align: center;
+  padding: 6px 8px;
+  color: var(--c-text);
+}
+.cal__day:disabled{
+  opacity: 1; 
+  cursor: default;
+}
+.cal__day.--outside{
+  color: var(--c-muted);
+  background: #fafafa;
+}
+.cal__day.--today{
+  border-color: var(--c-accent);
+  box-shadow: inset 0 0 0 1px var(--c-accent);
+}
+.cal__day-num{
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
 .cal__placeholder{
   height: 200px;
   display:grid;
