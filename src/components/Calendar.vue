@@ -144,6 +144,7 @@ function changeMonth(delta) {
   --c-muted:#666;
   --c-border:#e6e6e6;
   --c-accent:#2563eb;
+  --c-hover:#f3f4f6;
   --radii:12px;
 
   width: 320px;
@@ -169,7 +170,20 @@ function changeMonth(delta) {
   border:1px solid var(--c-border);
   background:#fff;
   border-radius:8px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items:center;
+  transition: background .15s ease, border-color .15s ease, transform .5s ease;
   padding:4px 8px;
+}
+
+.cal__nav:hover{ background: var(--c-hover); }
+.cal__nav:active{ transform: translateY(1px); }
+
+.cal__nav:focus-visible{
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
 }
 
 .cal__weekdays{
@@ -178,7 +192,8 @@ function changeMonth(delta) {
   gap: 0;
   padding:8px;
   color:var(--c-muted);
-  font-size:12px;
+  font-size:11px;
+  letter-spacing: .02em;
   border-bottom:1px solid var(--c-border);
   text-align:center;
 }
@@ -188,32 +203,39 @@ function changeMonth(delta) {
 .cal__grid{
   display:grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 6px;
   padding:8px;
 }
 
 .cal__day{
   position: relative;
-  height: 40px;
+  height: 38px;
   border: 1px solid var(--c-border);
   border-radius: 8px;
   background:#fff;
   display: grid;
   place-items: center;
   color: var(--c-text);
+  transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
 }
-.cal__day:disabled{
-  opacity: 1; 
-  cursor: default;
-}
+
 .cal__day.--outside{
-  color: var(--c-muted);
-  background: #fafafa;
+  color:#9aa1a7;
+  background:transparent;
 }
 .cal__day.--today{
-  border-color: var(--c-accent);
   box-shadow: inset 0 0 0 1px var(--c-accent);
 }
+
+cal__day:focus-visible{
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+}
+
+.cal__day:not(.--disabled):not(.--selected):hover{
+    background: var(--c-hover);
+}
+
 .cal__day-num{
   font-size: 12px;
   font-variant-numeric: tabular-nums;
@@ -224,6 +246,7 @@ function changeMonth(delta) {
   background: var(--c-accent);
   color: #fff;
   border-color: var(--c-accent);
+  box-shadow: 0 0 0 2px rgba(37,99,235,.15) inset;
 }
 
 .cal__placeholder{
