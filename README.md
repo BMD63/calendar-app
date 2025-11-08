@@ -1,5 +1,37 @@
-# Vue 3 + Vite
+# Vue 3 Calendar (Composition API)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Kомпонент-календарь на Vue 3 (Composition API) без внешних зависимостей.  
+Поддерживает переключение месяцев, выбор даты, начальную дату, смену языка (месяцы/дни недели).
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Стек
+- Vue 3 (Composition API)
+- Vite
+- `Intl.DateTimeFormat` для i18n
+
+## Быстрый старт
+```bash
+npm i
+npm run dev
+
+``` 
+
+## Демо
+
+В демо-странице есть кнопка ⚙️ для переключения локали и первого дня недели (понедельник/воскресенье).
+
+
+Поведение по ТЗ:
+
+При инициализации, если modelValue передан — календарь открывается на её месяце и день подсвечивается.
+
+Если modelValue не передан — берётся текущий день.
+
+Переключение месяцев кнопками «вперёд/назад».
+
+Клик по дню выбирает дату и эмитит update:modelValue (YYYY-MM-DD) и select (Date).
+
+Смена языка осуществляется через проп locale (в демо — селектором в настройках).
+
+## Лицензия 
+
+MIT
