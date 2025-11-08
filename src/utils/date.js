@@ -16,7 +16,7 @@ export function formatYmd(date) {
   return `${y}-${pad2(m + 1)}-${pad2(d)}`
 }
 
-export function normalizeDate(input) {
+export function normalizeDate(input) {  // проверяем и нормализуем входные данные
   if (!input) return null
   if (input instanceof Date) return new Date(input.getFullYear(), input.getMonth(), input.getDate())
   if (typeof input === 'string') {

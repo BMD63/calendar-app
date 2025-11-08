@@ -28,9 +28,9 @@ const emit = defineEmits([
 ])
 
 const initial =
-  normalizeDate(props.modelValue) ??
+  normalizeDate(props.modelValue) ?? // Если есть выбранная дата
   normalizeDate(props.initialMonth) ??
-  new Date()
+  new Date()    // Если дата не задана, используем текущую дату
 
 const viewAnchor = ref(initial)
 watch(
@@ -256,5 +256,29 @@ cal__day:focus-visible{
   color: var(--c-muted);
   border: 1px dashed var(--c-border);
   border-radius: 8px;
+}
+@media (max-width: 360px){
+  .cal{ width: 100%; }
+  .cal__header{ padding: 6px; }
+  .cal__label{ font-size: 14px; }
+  .cal__nav{
+    width: 24px;
+    height: 24px;
+  }
+  .cal__weekdays{
+    padding:6px;
+    font-size:10px;
+  }
+  .cal__grid{
+    gap: 4px;
+    padding:6px;
+  }
+  .cal__day{
+    height: 32px;
+    border-radius: 6px;
+  }
+  .cal__day-num{
+    font-size: 11px;
+  }
 }
 </style>

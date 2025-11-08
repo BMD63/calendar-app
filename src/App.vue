@@ -1,11 +1,18 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import Calendar from './components/Calendar.vue'
 
 const selected = ref('') 
 const locale = ref('ru-RU')
 const startWeekOn = ref(1) // 1 = понедельник, 0 = воскресенье
 const showSettings = ref(false)
+
+const selectedPretty = computed(() => {
+  if (!selected.value) return ''
+  const [y, m, d] = selected.value.split('-').map(Number)
+  const dt = new Date(y, (m || 1) - 1, d || 1)
+  return new Intl.DateTimeFormat(locale.value || undefined, { dateStyle: 'full' }).format(dt)
+  })
 
 </script>
 
@@ -44,16 +51,24 @@ const showSettings = ref(false)
       </label>
     </div>
 
-    <section class="panel">
-      <div class="row">
-        <label>Выбранная дата:</label>
-        <code>{{ selected || '—' }}</code>
-      </div>
-      <Calendar 
+    <section class="panel panel--grid">
+      <div class="panel__left">
+        <Calendar 
         v-model="selected" 
         :locale="locale"
         :startWeekOn="startWeekOn"
         />
+      </div>
+      <div class="panel__right">
+        <div
+          v-if="selected"
+          class="date-badge"
+          :title="selected"
+          >
+          {{ selectedPretty }}
+        </div>
+      </div>
+      
     </section>
   </main>
 </template>
@@ -75,6 +90,44 @@ h1 { margin: 0 0 16px; font-size: 24px; }
   padding: 16px;
   background: #fff;
 }
+.panel--grid{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  min-height: 360px;
+}
+.panel__left{
+  display: flex;
+  align-items: flex-start;
+}
+.panel__right{
+  display: grid;
+  place-items: center;
+}
+.date-badge{
+  max-width: 520px;
+  padding: 28px 32px;
+  border: 1px solid #e5e5e5;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
+  font-size: 28px;
+  line-height: 1.25;
+  text-align: center;
+  word-break: break-word;
+}
+@media (max-width: 800px){
+  .panel--grid{
+    grid-template-columns: 1fr;
+    min-height: unset;
+    justify-items: center; 
+  }
+  .panel__right{
+    place-items: center;
+  }
+  .date-badge{ width: 100%; }
+}
+
 .row {
   display: flex;
   gap: 8px;
